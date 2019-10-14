@@ -20,13 +20,13 @@ then prints it out:
 ```
 # print8.ls8: Print the number 8 on the screen
 
-10000010 # LDI R0,8
-00000000
-00001000
-01000111 # PRN R0
-00000000
-00000001 # HLT
-```
+10000010 # LDI R0,8          Action save():
+00000000 #                      access register 0
+00001000 #                      save value 8
+01000111 # PRN R0            Action print():
+00000000 #                      print register 0
+00000001 # HLT               Action halt(): 
+```                             exit(1)
 
 The binary numeric value on the left in the `print8.ls8` code above is either:
 
