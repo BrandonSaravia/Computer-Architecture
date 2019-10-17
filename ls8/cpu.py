@@ -17,6 +17,9 @@ class CPU:
         self.MUL = 162
         self.PUSH = 69
         self.POP = 70
+        self.CALL = 80
+        self.ADD = 160
+        self.RET = 17
         
 
     def load(self):
@@ -30,7 +33,10 @@ class CPU:
             file1 = open(sys.argv[1], 'r')
             for text in file1:
                 x = text.split()
-                program.append(int(x[0],2))
+                instruction = x[0]
+                if instruction != "#":
+                    program.append(int(instruction, 2))
+                    
         else:
             program = [
                 # From print8.ls8
@@ -95,7 +101,7 @@ class CPU:
             if (self.pc + 1) <= len(self.ram)-1:
                 operand_a = self.ram_read(self.pc + 1)
             if (self.pc + 2) <= len(self.ram)-1:
-                operand_b = self.ram_read(self.pc + 2)
+                operand_b = self.ram_read(self.pc + 2) 
 
             if IR == self.LDI:
                 self.ram_write(operand_b, operand_a)
@@ -103,6 +109,17 @@ class CPU:
             elif IR == self.MUL:
                 self.alu('MUL', operand_a, operand_b)
                 self.pc += 3
+            elif IR == self.ADD:
+                self.alu('ADD', operand_a, operand_b)
+                self.pc += 3
+            elif IR == self.CALL:
+                self.sp -= 1
+                self.ram[self.sp] = self.pc + 2
+                self.pc = self.reg[operand_a]
+            elif IR == self.RET:
+                value = self.ram[self.sp]
+                self.sp += 1
+                self.pc = value
             elif IR == self.PUSH:
                 self.sp -= 1
                 value = self.reg[operand_a]
