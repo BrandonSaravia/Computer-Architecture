@@ -7,13 +7,17 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        self.ram = [0]
+        self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0b000000000
+        self.sp = 244
         self.LDI = 130
         self.PRN = 71
         self.HLT = 1
         self.MUL = 162
+        self.PUSH = 69
+        self.POP = 70
+        
 
     def load(self):
         """Load a program into memory."""
@@ -43,8 +47,6 @@ class CPU:
         for instruction in program:
             self.ram[address] = instruction
             address += 1
-
-        print(program)
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -100,6 +102,17 @@ class CPU:
             elif IR == self.MUL:
                 self.alu('MUL', operand_a, operand_b)
                 self.pc += 3
+            elif IR == self.PUSH:
+                self.sp -= 1
+                value = self.reg[operand_a]
+                self.ram[self.sp] = value
+                self.pc += 2
+            elif IR == self.POP:
+                pop_value = self.ram[self.sp]
+                reg_address = self.ram[self.pc + 1]
+                self.reg[reg_address] = pop_value
+                self.sp += 1
+                self.pc += 2
             elif IR == self.PRN:
                 print(self.reg[operand_a])
                 self.pc += 2
